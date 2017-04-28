@@ -3,7 +3,7 @@
 var bluebird = require('bluebird');
 var request = require('request');
 var debug = require('debug')('vault-hfc-kv');
-const timeout = 5000;
+const defaultTimeout = 5000;
 
 module.exports = {
     newVaultKeyValStore: newVaultKeyValStore
@@ -12,7 +12,8 @@ module.exports = {
 var pGet = bluebird.promisify(request.get);
 var pPost = bluebird.promisify(request.post);
 
-function VaultKeyValueStore(vaultUrl, vaultToken) {
+function VaultKeyValueStore(vaultUrl, vaultToken, timeout) {
+    this.timeout = timeout;
     this.vaultUrl = vaultUrl;
     this.vaultHeaders = {
         'X-Vault-Token': vaultToken
@@ -29,7 +30,7 @@ VaultKeyValueStore.prototype.setValue = function (name, value, cb) {
         url: path,
         json: body,
         headers: this.vaultHeaders,
-        timeout: timeout
+        timeout: this.timeout
     }).then(function (response) {
         debug('Received response from vault', response.statusCode);
         if (response.statusCode != 204) {
@@ -50,10 +51,12 @@ VaultKeyValueStore.prototype.getValue = function (name, cb) {
     pGet({
         url: path,
         headers: this.vaultHeaders,
-        timeout: timeout
+        timeout: this.timeout
     }).then(function (response) {
          debug('Received response from vault', response.statusCode);
-         if (response.statusCode != 200) {
+         if (response.statusCode == 404) {
+             cb(null, null);
+         } else if (response.statusCode != 200) {
              cb(new Error('Failed to read from vault with status code ' + response.statusCode));
          } else {
              var responseJson = JSON.parse(response.body);
@@ -71,6 +74,6 @@ VaultKeyValueStore.prototype.getValue = function (name, cb) {
  * @param {String} vaultUrl URL of hashicorp vault in following format <scheme>://<hostname>:<port>/<path>
  * @param {String} vaultToken Token to be used in header to store and retrieve certs
  */
-function newVaultKeyValStore(vaultUrl, vaultToken) {
-    return new VaultKeyValueStore(vaultUrl, vaultToken);
+function newVaultKeyValStore(vaultUrl, vaultToken, timeout=defaultTimeout) {
+    return new VaultKeyValueStore(vaultUrl, vaultToken, timeout);
 }

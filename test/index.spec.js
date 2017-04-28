@@ -175,4 +175,64 @@ describe('Vault KeyValueStore', function () {
             });
         })
     })
+
+    context('when vault server returns non 404 status code', function () {
+        beforeEach(function () {
+            vaultUrl = 'http://isawcfzoqr.hfc.kv';
+            member = "member4";
+            vaultCompletePath = vaultUrl + vaultPath;
+            var vaultServer = nock(vaultUrl, {
+                reqheaders: {
+                    'X-Vault-Token': vaultToken
+                }
+            }).get(/v1\/secret\/myinstance\/.*/)
+              .reply(404, 'Not found');
+            vaultKeyValueStore = vaultKv.newVaultKeyValStore(vaultCompletePath, vaultToken);
+        })
+
+        it('returns null value', function (done) {
+            var getValue = bluebird.promisify(vaultKeyValueStore.getValue, {
+                context: vaultKeyValueStore
+            });
+            getValue(member).then(function (response) {
+                expect(response).to.be.null;
+                done();
+            }
+            ).catch(function (err) {
+                done(err);
+            });
+        })
+    })
+
+    context('when vault server times out', function () {
+        var timeout = 1000;
+        beforeEach(function () {
+            vaultUrl = 'http://hkfrrpdfsv.hfc.kv';
+            member = "member4";
+            vaultCompletePath = vaultUrl + vaultPath;
+            var vaultServer = nock(vaultUrl, {
+                reqheaders: {
+                    'X-Vault-Token': vaultToken
+                }
+            }).get(/v1\/secret\/myinstance\/.*/)
+              .socketDelay(timeout+500).reply(200, '');
+            vaultKeyValueStore = vaultKv.newVaultKeyValStore(vaultCompletePath, vaultToken, timeout);
+        })
+
+        it('returns error on timeout', function (done) {
+            var getValue = bluebird.promisify(vaultKeyValueStore.getValue, {
+                context: vaultKeyValueStore
+            });
+            getValue(member).then(function (response) {
+                done(new Error('Should not have reached here'));
+            }
+            ).catch(function (err) {
+               if (err.message.includes('ESOCKETTIMEDOUT')) {
+                    done();
+                } else {
+                    done(err);
+                }
+            });
+        })
+    })
 })
