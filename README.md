@@ -18,5 +18,5 @@ This node module provides KeyValueStore implementation backed by [hashicorp vaul
     ```
     var chain = hfc.newChain(chainName);
     // Other initializations for chain
-    chain.setKeyValStore(vault);∏
+    chain.setKeyValStore(vault);
     ```
