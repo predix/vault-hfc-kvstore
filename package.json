@@ -1,0 +1,28 @@
+{
+  "name": "vault-hfc-kvstore",
+  "version": "0.0.1",
+  "description": "This module provides KeyValueStore implementation for hfc backed by hashicorp vault",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "keywords": [
+    "vault",
+    "hfc",
+    "blockchain",
+    "hyperledger",
+    "fabric"
+  ],
+  "author": "Atul Kshirsagar",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "debug": "^2.6.5",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.3.0",
+    "nock": "^9.0.13"
+  }
+}

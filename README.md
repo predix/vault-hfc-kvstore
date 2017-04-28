@@ -1,0 +1,2 @@
+# Vault HFC KeyValueStore
+This node module provides KeyValueStore implementation backed by [hashicorp vault](https://www.vaultproject.io/) for [Hyperledger Fabric Client SDK](https://www.npmjs.com/package/hfc). This allows the nodejs clients of hyperledger to store the ECerts in vault instead of on file system thereby making it more secure and cloud friendly.
