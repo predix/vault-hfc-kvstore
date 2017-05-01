@@ -1,6 +1,6 @@
 {
   "name": "vault-hfc-kvstore",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "This module provides KeyValueStore implementation for hfc backed by hashicorp vault",
   "main": "index.js",
   "scripts": {
