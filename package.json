@@ -13,6 +13,10 @@
     "hyperledger",
     "fabric"
   ],
+  "repository" :
+  { "type" : "git"
+  , "url" : "https://github.com/predix/vault-hfc-kvstore.git"
+  },
   "author": "Atul Kshirsagar",
   "license": "Apache-2.0",
   "dependencies": {
